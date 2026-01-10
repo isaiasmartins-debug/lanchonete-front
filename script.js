@@ -65,7 +65,6 @@ function render() {
           <div class="item-main">
             <span class="item-title">${p.name} — R$ ${p.price.toFixed(2)}</span>
             <div class="item-actions">
-              ${p.desc ? `<button class="toggle-desc" onclick="toggleDesc(${p.id}, this)">⌄</button>` : ""}
               ${
   getCartItem(p.id)
     ? `
@@ -85,6 +84,13 @@ function render() {
         div.appendChild(el);
       });
   });
+  const adicionaisSection = document.getElementById("adicionais-section");
+
+if (hasBurgerInCart()) {
+  adicionaisSection.style.display = "block";
+} else {
+  adicionaisSection.style.display = "none";
+}
 }
 
 function addToCart(id) {
@@ -131,12 +137,6 @@ function renderCart() {
   totalSpan.textContent = total.toFixed(2);
 }
 
-function toggleDesc(id, btn) {
-  const desc = document.getElementById(`desc-${id}`);
-  const open = desc.classList.toggle("open");
-  btn.classList.toggle("rotated", open);
-}
-
 function getCartItem(id) {
   return cart.find(i => i.id === id);
 }
@@ -161,6 +161,20 @@ function decreaseQty(id) {
 
   render();
   renderCart();
+}
+
+function canUseAddons() {
+  return cart.some(item => {
+    const product = products.find(p => p.id === item.id);
+    return product && product.category === "lanches";
+  });
+}
+
+function hasBurgerInCart() {
+  return cart.some(item => {
+    const product = products.find(p => p.id === item.id);
+    return product && product.category === "lanches";
+  });
 }
 
 document.getElementById("sendOrder").onclick = () => {

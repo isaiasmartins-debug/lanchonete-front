@@ -79,30 +79,13 @@ h2 {
   text-align: left;
 }
 
-.toggle-desc {
-  background: none;
-  border: none;
-  color: #ffd700;
-  font-size: 18px;
-  transition: transform 0.3s ease;
-}
-
-.toggle-desc.rotated {
-  transform: rotate(180deg);
-}
-
 .item-desc {
   font-size: 13px;
   color: #ccc;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
-  opacity: 0;
-}
-
-.item-desc.open {
-  max-height: 200px;
+  margin-top: 4px;
   opacity: 1;
+  max-height: none;
+  overflow: visible;
 }
 
 .add-btn {
@@ -159,4 +142,8 @@ h2 {
 
 .cart-remove:hover {
   opacity: 0.7;
+}
+
+#adicionais-section {
+  display: none;
 }
