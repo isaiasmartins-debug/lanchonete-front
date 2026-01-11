@@ -105,50 +105,62 @@ if (hasBurgerInCart()) {
 }
 document.querySelectorAll(".add-btn").forEach(btn => {
   btn.onclick = () => {
-  const id = Number(btn.dataset.id);
-  const product = products.find(p => p.id === id);
+    const id = Number(btn.dataset.id);
+    const product = products.find(p => p.id === id);
+    if (!product) return;
 
-  if (!product) return;
+    const isHamburger =
+      product.name.toLowerCase().includes("hambúrguer") ||
+      product.name.toLowerCase().includes("hamburger");
 
-  if (product.category === "lanches") {
-    openAddonModal(product);
-    return;
-  }
+    if (isHamburger) {
+      openAddonModal(product);
+      return;
+    }
 
-  if (product.category === "salgados" && product.sabores?.length) {
-    openFlavorModal(product);
-    return;
-  }
+    if (product.category === "salgados" && saboresPorProduto[product.id]) {
+      openFlavorModal(product);
+      return;
+    }
 
-  addToCart(id);
-};
+    addToCart(id);
+  };
 });
 }
 
 function addToCart(id) {
-  console.log("addToCart chamado com id", id);
-
   const product = products.find(p => p.id === id);
   if (!product) return;
 
   const item = getCartItem(id);
 
-  // 🟡 SE for lanche e ainda não está no carrinho → abre modal de adicionais
-  if (product.sabores?.length && !item) {
+  const isHamburger =
+    product.name.toLowerCase().includes("hambúrguer") ||
+    product.name.toLowerCase().includes("hamburger");
+
+  // 🍔 Se for hambúrguer e ainda não estiver no carrinho → abre adicionais
+  if (isHamburger && !item) {
+    openAddonModal(product);
+    return;
+  }
+
+  // 🥟 Se for salgado com sabores → abre sabores
+  if (product.category === "salgados" && saboresPorProduto[product.id]) {
     openFlavorModal(product);
     return;
   }
 
-  // 🟢 SE for salgado com sabores → abre modal de sabores
-  if (product.category === "salgados" &&
-  saboresPorProduto[product.id]) {
-    openFlavorModal(product);
-    return;
+  // ➕ Caso normal: adiciona direto
+  if (item) {
+    item.qty++;
+  } else {
+    cart.push({
+      id,
+      qty: 1,
+      sabor: product.sabor || null,
+      adicionais: product.adicionaisSelecionados || []
+    });
   }
-
-  // 🟢 Caso normal: adiciona no carrinho
-  if (item) item.qty++;
-  else cart.push({ id: id, qty: 1 });
 
   render();
   renderCart();
