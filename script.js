@@ -24,7 +24,7 @@ const products = [
     name: "Pastel de Feira", 
     price: 7, 
     category: "salgados",
-    desc: "Sabores: Carne, Pizza, Queijo" },
+    desc: "Sabores: Carne, Pizza, Queijo, Frango, Calabresa" },
   { id: 6, 
     name: "Coxinha", 
     price: 7, 
@@ -44,10 +44,22 @@ const products = [
   { id: 12, name: "Ovo", price: 2, category: "adicionais" }
 ];
 
+const adicionaisDisponiveis = [
+  { nome: "Carne Industrializada", preco: 3 },
+  { nome: "Carne Caseira", preco: 8},
+  {nome: "Ovo",preco: 2}
+];
+
+const saboresPorProduto = {
+5: ["Carne", "Pizza", "Queijo", "Frango", "Calabresa"], // Pastel de Feira (id 5)
+6: ["Frango"], //Coxinha (id 6)
+7:["Carne"], // Risole (id 7)
+};
+
 let cart = [];
 
 function render() {
-  const categories = ["lanches", "salgados", "acompanhamentos", "adicionais"];
+  const categories = ["lanches", "salgados", "acompanhamentos"];
 
   categories.forEach(cat => {
     const div = document.getElementById(cat);
@@ -74,7 +86,7 @@ function render() {
         <button onclick="increaseQty(${p.id})">+</button>
       </div>
     `
-    : `<button class="add-btn" onclick="addToCart(${p.id})">Adicionar</button>`
+    : `<button class="add-btn" data-id="${p.id}">Adicionar</button>`
 }
             </div>
           </div>
@@ -91,11 +103,50 @@ if (hasBurgerInCart()) {
 } else {
   adicionaisSection.style.display = "none";
 }
+document.querySelectorAll(".add-btn").forEach(btn => {
+  btn.onclick = () => {
+  const id = Number(btn.dataset.id);
+  const product = products.find(p => p.id === id);
+
+  if (!product) return;
+
+  if (product.category === "lanches") {
+    openAddonModal(product);
+    return;
+  }
+
+  if (product.category === "salgados" && product.sabores?.length) {
+    openFlavorModal(product);
+    return;
+  }
+
+  addToCart(id);
+};
+});
 }
 
 function addToCart(id) {
-  let item = getCartItem(id);
+  console.log("addToCart chamado com id", id);
 
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+
+  const item = getCartItem(id);
+
+  // 🟡 SE for lanche e ainda não está no carrinho → abre modal de adicionais
+  if (product.sabores?.length && !item) {
+    openFlavorModal(product);
+    return;
+  }
+
+  // 🟢 SE for salgado com sabores → abre modal de sabores
+  if (product.category === "salgados" &&
+  saboresPorProduto[product.id]) {
+    openFlavorModal(product);
+    return;
+  }
+
+  // 🟢 Caso normal: adiciona no carrinho
   if (item) item.qty++;
   else cart.push({ id: id, qty: 1 });
 
@@ -190,4 +241,102 @@ document.getElementById("sendOrder").onclick = () => {
   document.getElementById("name").value = "";
 };
 
+let modalContext = null;
+
+function openFlavorModal(produto) {
+  modalContext = { type: "sabor", produto };
+
+  document.getElementById("modalTitle").textContent = "Escolha o sabor";
+  renderOptions(saboresPorProduto[produto.id]
+  || []);
+  openModal();
+}
+
+function openAddonModal(produto) {
+  modalContext = { type: "adicional", produto };
+
+  document.getElementById("modalTitle").textContent = "Escolha os adicionais";
+  renderOptions(adicionaisDisponiveis);
+  openModal();
+}
+
+function renderOptions(lista = []) {
+  console.log("renderOptions chamada com:",
+lista);
+
+  const container = document.getElementById("modalOptions");
+  container.innerHTML = "";
+
+  lista.forEach(item => {
+    const div = document.createElement("div");
+
+    if (typeof item === "string") {
+      div.innerHTML = `
+        <label>
+          <input type="radio" name="modalOption" value="${item}">
+          ${item}
+        </label>
+      `;
+    } else {
+      div.innerHTML = `
+        <label>
+          <input type="checkbox" value="${item.nome}">
+          ${item.nome} (+R$ ${item.preco})
+        </label>
+      `;
+    }
+
+    container.appendChild(div);
+  });
+}
+
+function openModal() {
+  document.getElementById("modalOverlay").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("modalOverlay").classList.add("hidden");
+}
+
+function addProductWithOptions(product) {
+  let item = getCartItem(product.id);
+
+  if (item) {
+    item.qty++;
+  } else {
+    cart.push({
+      id: product.id,
+      qty: 1,
+      sabor: product.sabor || null,
+      adicionais: product.adicionaisSelecionados || []
+    });
+  }
+
+  render();
+  renderCart();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const cancelBtn = document.getElementById("cancelModal");
+  const confirmBtn = document.getElementById("confirmModal");
+
+  if (cancelBtn) cancelBtn.onclick = closeModal;
+
+  if (confirmBtn) confirmBtn.onclick = () => {
+    const checked = [...document.querySelectorAll("#modalOptions input:checked")];
+
+if (modalContext.type === "sabor") {
+  modalContext.produto.sabor = checked[0]?.value || null;
+}
+
+if (modalContext.type === "adicional") {
+  modalContext.produto.adicionaisSelecionados = checked.map(i => ({
+    nome: i.value
+  }));
+}
+
+    addProductWithOptions(modalContext.produto);
+    closeModal();
+  };
+});
 render();
