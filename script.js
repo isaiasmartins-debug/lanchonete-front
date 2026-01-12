@@ -183,16 +183,28 @@ function renderCart() {
     const product = products.find(p => p.id === item.id);
     if (!product) return;
 
-    const lineTotal = product.price * item.qty;
+    const adicionaisTotal = calcularTotalAdicionais(item.adicionais);
+const lineTotal = (product.price + adicionaisTotal) * item.qty;
     total += lineTotal;
+
+    let adicionaisHTML = "";
+
+if (item.adicionais && item.adicionais.length > 0) {
+  adicionaisHTML = item.adicionais.map(a => `
+    <div class="cart-adicional">
+      + ${a.nome} (${a.quantidade}x) — R$ ${(a.preco * a.quantidade).toFixed(2)}
+    </div>
+  `).join("");
+}
 
     const li = document.createElement("li");
     li.innerHTML = `
-      <span class="cart-name">
-        ${product.name} x${item.qty} — R$ ${lineTotal.toFixed(2)}
-      </span>
-      <button class="cart-remove" onclick="removeFromCart(${item.id})">🗑️</button>
-    `;
+  <span class="cart-name">
+    ${product.name} x${item.qty} — R$ ${lineTotal.toFixed(2)}
+    ${adicionaisHTML}
+  </span>
+  <button class="cart-remove" onclick="removeFromCart(${item.id})">✖</button>
+`;
 
     ul.appendChild(li);
   });
@@ -290,16 +302,37 @@ lista);
         </label>
       `;
     } else {
-      div.innerHTML = `
-        <label>
-          <input type="checkbox" value="${item.nome}">
-          ${item.nome} (+R$ ${item.preco})
-        </label>
-      `;
-    }
+  div.innerHTML = `
+    <div class="adicional-item" data-nome="${item.nome}" data-preco="${item.preco}">
+      <span>${item.nome} (+R$ ${item.preco})</span>
+      <div class="contador">
+        <button class="menos">−</button>
+        <span class="quantidade">0</span>
+        <button class="mais">+</button>
+      </div>
+    </div>
+  `;
+}
 
     container.appendChild(div);
   });
+}
+
+function pegarAdicionaisSelecionados() {
+  const adicionais = [];
+
+  document.querySelectorAll(".adicional-item").forEach(item => {
+    const qtd = Number(item.querySelector(".quantidade").textContent);
+    if (qtd > 0) {
+      adicionais.push({
+        nome: item.dataset.nome,
+        preco: Number(item.dataset.preco),
+        quantidade: qtd
+      });
+    }
+  });
+
+  return adicionais;
 }
 
 function openModal() {
@@ -328,7 +361,29 @@ function addProductWithOptions(product) {
   renderCart();
 }
 
+function calcularTotalAdicionais(adicionais = []) {
+  return adicionais.reduce((total, a) => {
+    return total + (a.preco * a.quantidade);
+  }, 0);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+
+  document.getElementById("modalOptions").addEventListener("click", (e) => {
+  if (e.target.classList.contains("mais")) {
+    const item = e.target.closest(".adicional-item");
+    const qtdSpan = item.querySelector(".quantidade");
+    qtdSpan.textContent = Number(qtdSpan.textContent) + 1;
+  }
+
+  if (e.target.classList.contains("menos")) {
+    const item = e.target.closest(".adicional-item");
+    const qtdSpan = item.querySelector(".quantidade");
+    if (Number(qtdSpan.textContent) > 0) {
+      qtdSpan.textContent = Number(qtdSpan.textContent) - 1;
+    }
+  }
+});
   const cancelBtn = document.getElementById("cancelModal");
   const confirmBtn = document.getElementById("confirmModal");
 
@@ -342,9 +397,7 @@ if (modalContext.type === "sabor") {
 }
 
 if (modalContext.type === "adicional") {
-  modalContext.produto.adicionaisSelecionados = checked.map(i => ({
-    nome: i.value
-  }));
+  modalContext.produto.adicionaisSelecionados = pegarAdicionaisSelecionados();
 }
 
     addProductWithOptions(modalContext.produto);

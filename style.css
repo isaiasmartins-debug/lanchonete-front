@@ -177,3 +177,37 @@ h2 {
 .hidden {
   display: none;
 }
+
+.adicional-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.contador {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contador button {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.quantidade {
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.cart-adicional {
+  font-size: 0.85em;
+  margin-left: 12px;
+  color: #ccc;
+}
