@@ -24,7 +24,7 @@ const products = [
     name: "Pastel de Feira", 
     price: 7, 
     category: "salgados",
-    desc: "Sabores: Carne, Pizza, Queijo, Frango, Calabresa" },
+    desc: "Sabores: Carne, Pizza, Queijo" },
   { id: 6, 
     name: "Coxinha", 
     price: 7, 
@@ -35,7 +35,12 @@ const products = [
     price: 7, 
     category: "salgados",
     desc: "Sabor: Carne" },
-  { id: 8, name: "Salgado de Forno", price: 7, category: "salgados" },
+  { id: 8, 
+    name: "Salgado de Forno", 
+    price: 7, 
+    category: "salgados",
+    desc: "Sabores: Esfirra de Carne, Catarina de Frango, Folhado de Queijo, Folhado de Frango, Folhado de Calabresa"
+   },
 
   { id: 9, name: "Batata Frita na Marmita", price: 10, category: "acompanhamentos" },
 
@@ -51,9 +56,11 @@ const adicionaisDisponiveis = [
 ];
 
 const saboresPorProduto = {
-5: ["Carne", "Pizza", "Queijo", "Frango", "Calabresa"], // Pastel de Feira (id 5)
+5: ["Carne", "Pizza", "Queijo"], // Pastel de Feira (id 5)
 6: ["Frango"], //Coxinha (id 6)
-7:["Carne"], // Risole (id 7)
+7: ["Carne"], // Risole (id 7)
+8: ["Esfirra de Carne", "Catarina de Frango", "Folhado de Queijo", "Folhado de Frango", "Folhado de Calabresa"],
+// Salgado de Forno (id 8)
 };
 
 let cart = [];
@@ -151,16 +158,21 @@ function addToCart(id) {
   }
 
   // ➕ Caso normal: adiciona direto
-  if (item) {
-    item.qty++;
-  } else {
-    cart.push({
-      id,
-      qty: 1,
-      sabor: product.sabor || null,
-      adicionais: product.adicionaisSelecionados || []
-    });
-  }
+  const isConfigurable = product.sabor || (product.adicionaisSelecionados && product.adicionaisSelecionados.length > 0);
+
+if (item && !isConfigurable) {
+  item.qty++;
+} else {
+  cart.push({
+    id,
+    qty: 1,
+    sabor: product.sabor || null,
+    adicionais: product.adicionaisSelecionados ? [...product.adicionaisSelecionados] : []
+  });
+}
+
+product.sabor = null;
+product.adicionaisSelecionados = null;
 
   render();
   renderCart();
@@ -213,7 +225,7 @@ if (item.adicionais && item.adicionais.length > 0) {
 }
 
 function getCartItem(id) {
-  return cart.find(i => i.id === id);
+  return cart.find(i => i.id === id && !i.sabor && (!i.adicionais || i.adicionais.length === 0));
 }
 
 function increaseQty(id) {
