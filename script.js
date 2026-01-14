@@ -63,6 +63,15 @@ const saboresPorProduto = {
 // Salgado de Forno (id 8)
 };
 
+function addonsEqual(a = [], b = []) {
+  if (a.length !== b.length) return false;
+
+  return a.every(ad1 => {
+    const ad2 = b.find(x => x.nome === ad1.nome);
+    return ad2 && ad2.quantidade === ad1.quantidade;
+  });
+}
+
 let cart = [];
 
 function render() {
@@ -80,19 +89,25 @@ function render() {
         const el = document.createElement("div");
         el.className = "item";
 
+        const isHamburger =
+  p.name.toLowerCase().includes("hambúrguer") ||
+  p.name.toLowerCase().includes("hamburger");
+
+        const itemInCart = cart.find(i => i.id === p.id);
+
         el.innerHTML = `
           <div class="item-main">
             <span class="item-title">${p.name} — R$ ${p.price.toFixed(2)}</span>
             <div class="item-actions">
-              ${
-  getCartItem(p.id)
-    ? `
-      <div class="qty-control">
-        <button onclick="decreaseQty(${p.id})">−</button>
-        <span>${getCartItem(p.id).qty}</span>
-        <button onclick="increaseQty(${p.id})">+</button>
-      </div>
-    `
+
+${isHamburger
+  ? `<button class="add-btn" data-id="${p.id}">Adicionar</button>`
+  : itemInCart
+    ? `<div class="qty-control">
+         <button onclick="decreaseQty(${p.id})">-</button>
+         <span>${itemInCart.qty}</span>
+         <button onclick="increaseQty(${p.id})">+</button>
+       </div>`
     : `<button class="add-btn" data-id="${p.id}">Adicionar</button>`
 }
             </div>
@@ -139,7 +154,11 @@ function addToCart(id) {
   const product = products.find(p => p.id === id);
   if (!product) return;
 
-  const item = getCartItem(id);
+  const item = getCartItem(
+    id,
+    product.sabor || null,
+    product.adicionaisSelecionados || []
+  );
 
   const isHamburger =
     product.name.toLowerCase().includes("hambúrguer") ||
@@ -158,7 +177,12 @@ function addToCart(id) {
   }
 
   // ➕ Caso normal: adiciona direto
-  const isConfigurable = product.sabor || (product.adicionaisSelecionados && product.adicionaisSelecionados.length > 0);
+  const hasFlavor = !!product.sabor;
+const hasAddons =
+  Array.isArray(product.adicionaisSelecionados) &&
+  product.adicionaisSelecionados.length > 0;
+
+const isConfigurable = hasFlavor || hasAddons;
 
 if (item && !isConfigurable) {
   item.qty++;
@@ -224,8 +248,12 @@ if (item.adicionais && item.adicionais.length > 0) {
   totalSpan.textContent = total.toFixed(2);
 }
 
-function getCartItem(id) {
-  return cart.find(i => i.id === id && !i.sabor && (!i.adicionais || i.adicionais.length === 0));
+function getCartItem(id, sabor = null, adicionais = []) {
+  return cart.find(i =>
+    i.id === id &&
+    i.sabor === sabor &&
+    addonsEqual(i.adicionais || [], adicionais || [])
+  );
 }
 
 function increaseQty(id) {
