@@ -202,9 +202,8 @@ product.adicionaisSelecionados = null;
   renderCart();
 }
 
-function removeFromCart(id) {
-  cart = cart.filter(i => i.id !== id);
-  render();
+function removeFromCart(index) {
+  cart.splice(index, 1);
   renderCart();
 }
 
@@ -215,7 +214,7 @@ function renderCart() {
   ul.innerHTML = "";
   let total = 0;
 
-  cart.forEach(item => {
+  cart.forEach((item, index) => {
     const product = products.find(p => p.id === item.id);
     if (!product) return;
 
@@ -239,7 +238,7 @@ if (item.adicionais && item.adicionais.length > 0) {
     ${product.name} x${item.qty} — R$ ${lineTotal.toFixed(2)}
     ${adicionaisHTML}
   </span>
-  <button class="cart-remove" onclick="removeFromCart(${item.id})">✖</button>
+  <button class="cart-remove" onclick="removeFromCart(${index})">✖</button>
 `;
 
     ul.appendChild(li);
@@ -319,6 +318,8 @@ function openFlavorModal(produto) {
 function openAddonModal(produto) {
   modalContext = { type: "adicional", produto };
 
+  adicionaisSelecionados = {}; // 🔹 ADICIONE ESTA LINHA
+
   document.getElementById("modalTitle").textContent = "Escolha os adicionais";
   renderOptions(adicionaisDisponiveis);
   openModal();
@@ -384,20 +385,25 @@ function closeModal() {
 }
 
 function addProductWithOptions(product) {
-  let item = getCartItem(product.id);
+  let item = cart.find(i =>
+  i.id === product.id &&
+  i.sabor === (product.sabor || null) &&
+  JSON.stringify(i.adicionais || []) === JSON.stringify(product.adicionaisSelecionados || [])
+);
 
   if (item) {
     item.qty++;
   } else {
     cart.push({
       id: product.id,
+      nome: product.nome,
+      preco: Number(product.preco),
       qty: 1,
       sabor: product.sabor || null,
       adicionais: product.adicionaisSelecionados || []
     });
   }
 
-  render();
   renderCart();
 }
 
