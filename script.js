@@ -232,10 +232,17 @@ if (item.adicionais && item.adicionais.length > 0) {
   `).join("");
 }
 
+    let saborHTML = "";
+
+    if (item.sabor) {
+      saborHTML = `<div class="cart-sabor">Sabor: ${item.sabor}</div>`;
+    }
+
     const li = document.createElement("li");
     li.innerHTML = `
   <span class="cart-name">
     ${product.name} x${item.qty} — R$ ${lineTotal.toFixed(2)}
+    ${saborHTML}
     ${adicionaisHTML}
   </span>
   <button class="cart-remove" onclick="removeFromCart(${index})">✖</button>
@@ -376,8 +383,27 @@ function pegarAdicionaisSelecionados() {
   return adicionais;
 }
 
+function pegarSaborSelecionado() {
+  const checked =
+document.querySelector("#modalOptions input:checked");
+  return checked ? checked.value : null;
+}
+
 function openModal() {
   document.getElementById("modalOverlay").classList.remove("hidden");
+
+  const confirmBtn = document.getElementById("confirmModal");
+
+  if (!confirmBtn) return;
+
+  if (modalContext.type === "sabor") {
+    confirmBtn.disabled = true;
+    confirmBtn.classList.add("disabled");
+  } else {
+    // adicional
+    confirmBtn.disabled = false;
+    confirmBtn.classList.remove("disabled");
+  }
 }
 
 function closeModal() {
@@ -387,7 +413,7 @@ function closeModal() {
 function addProductWithOptions(product) {
   let item = cart.find(i =>
   i.id === product.id &&
-  i.sabor === (product.sabor || null) &&
+  i.sabor === (product.saborSelecionado || null) &&
   JSON.stringify(i.adicionais || []) === JSON.stringify(product.adicionaisSelecionados || [])
 );
 
@@ -399,7 +425,7 @@ function addProductWithOptions(product) {
       nome: product.nome,
       preco: Number(product.preco),
       qty: 1,
-      sabor: product.sabor || null,
+      sabor: product.saborSelecionado || null,
       adicionais: product.adicionaisSelecionados || []
     });
   }
@@ -416,6 +442,15 @@ function calcularTotalAdicionais(adicionais = []) {
 document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("modalOptions").addEventListener("click", (e) => {
+  document
+  .getElementById("modalOptions")
+  .addEventListener("change", (e) => {
+    if (e.target.matches("input[type='radio']")) {
+      const confirmBtn = document.getElementById("confirmModal");
+      confirmBtn.disabled = false;
+      confirmBtn.classList.remove("disabled");
+    }
+  });
   if (e.target.classList.contains("mais")) {
     const item = e.target.closest(".adicional-item");
     const qtdSpan = item.querySelector(".quantidade");
@@ -436,10 +471,16 @@ document.addEventListener("DOMContentLoaded", () => {
   if (cancelBtn) cancelBtn.onclick = closeModal;
 
   if (confirmBtn) confirmBtn.onclick = () => {
-    const checked = [...document.querySelectorAll("#modalOptions input:checked")];
+    
+    if (modalContext.type === "sabor") {
+      const sabor = pegarSaborSelecionado();
 
-if (modalContext.type === "sabor") {
-  modalContext.produto.sabor = checked[0]?.value || null;
+      if (!sabor) {
+        alert("Escolha um sabor para continuar");
+        return;
+      }
+
+      modalContext.produto.saborSelecionado = sabor;
 }
 
 if (modalContext.type === "adicional") {
