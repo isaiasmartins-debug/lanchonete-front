@@ -3,46 +3,62 @@ const products = [
     name: "Hambúrguer Tradicional", 
     price: 10, 
     category: "lanches",
+    type: "lanche",
+    behavior: "config",
     desc: "Pão, ovo, presunto, queijo, salada, molho barbecue, bacon, maionese da casa, carne industrializada" },
   { id: 2, 
     name: "Hambúrguer Artesanal", 
     price: 16, 
     category: "lanches",
+    type: "lanche",
+    behavior: "config",
     desc: "Pão, ovo, presunto, queijo, salada, molho barbecue, bacon, maionese da casa, carne caseira" },
   { id: 3, 
     name: "Macarronada", 
     price: 15, 
     category: "lanches",
+    type: "lanche",
+    behavior: "quantity",
     desc: "Macarrão, molho à bolonhesa, salsicha, queijo, presunto, milho verde, batata palha" },
   { id: 4, 
     name: "Cachorro-quente", 
     price: 8, 
     category: "lanches",
+    type: "lanche",
+    behavior: "quantity",
     desc: "Pão, salsicha, salada, milho verde, carne moída, maionese da casa, batata palha" },
 
   { id: 5, 
     name: "Pastel de Feira", 
     price: 7, 
     category: "salgados",
+    type: "salagado",
+    behavior: "config",
     desc: "Sabores: Carne, Pizza, Queijo" },
   { id: 6, 
     name: "Coxinha", 
     price: 7, 
     category: "salgados",
+    type: "salagado",
+    behavior: "config",
     desc: "Sabor: Frango" },
   { id: 7, 
     name: "Risole", 
     price: 7, 
     category: "salgados",
+    type: "salagado",
+    behavior: "config",
     desc: "Sabor: Carne" },
   { id: 8, 
     name: "Salgado de Forno", 
     price: 7, 
     category: "salgados",
+    type: "salagado",
+    behavior: "config",
     desc: "Sabores: Esfirra de Carne, Catarina de Frango, Folhado de Queijo, Folhado de Frango, Folhado de Calabresa"
    },
 
-  { id: 9, name: "Batata Frita na Marmita", price: 10, category: "acompanhamentos" },
+  { id: 9, name: "Batata Frita na Marmita", price: 10, category: "acompanhamentos", type: "acompanhamento", behavior: "quantity" },
 
   { id: 10, name: "Carne Industrializada", price: 3, category: "adicionais" },
   { id: 11, name: "Carne Caseira", price: 8, category: "adicionais" },
@@ -74,6 +90,14 @@ function addonsEqual(a = [], b = []) {
 
 let cart = [];
 
+function isInCart(product) {
+  return cart.some(item =>
+    item.id === product.id &&
+    item.type === product.type
+  );
+}
+
+
 function render() {
   const categories = ["lanches", "salgados", "acompanhamentos"];
 
@@ -89,27 +113,34 @@ function render() {
         const el = document.createElement("div");
         el.className = "item";
 
-        const isHamburger =
-  p.name.toLowerCase().includes("hambúrguer") ||
-  p.name.toLowerCase().includes("hamburger");
+        const isQuantityItem = p.behavior === "quantity";
 
-        const itemInCart = cart.find(i => i.id === p.id);
+
+        const itemInCart = isInCart(p)
+  ? cart.find(i => i.id === p.id && i.type === p.type)
+  : null;
+
 
         el.innerHTML = `
           <div class="item-main">
             <span class="item-title">${p.name} — R$ ${p.price.toFixed(2)}</span>
             <div class="item-actions">
 
-${isHamburger
-  ? `<button class="add-btn" data-id="${p.id}">Adicionar</button>`
-  : itemInCart
-    ? `<div class="qty-control">
-         <button onclick="decreaseQty(${p.id})">-</button>
-         <span>${itemInCart.qty}</span>
-         <button onclick="increaseQty(${p.id})">+</button>
-       </div>`
-    : `<button class="add-btn" data-id="${p.id}">Adicionar</button>`
+${isQuantityItem
+  ? (
+      itemInCart
+        ? `
+          <div class="qty-control">
+            <button onclick="decreaseQty(${p.id})">-</button>
+            <span>${itemInCart.qty}</span>
+            <button onclick="increaseQty(${p.id})">+</button>
+          </div>
+        `
+        : `<button class="add-btn" data-id="${p.id}">Adicionar</button>`
+    )
+  : `<button class="add-btn" data-id="${p.id}">Adicionar</button>`
 }
+
             </div>
           </div>
           ${p.desc ? `<div class="item-desc" id="desc-${p.id}">${p.desc}</div>` : ""}
@@ -189,6 +220,7 @@ if (item && !isConfigurable) {
 } else {
   cart.push({
     id,
+    type: product.type,
     qty: 1,
     sabor: product.sabor || null,
     adicionais: product.adicionaisSelecionados ? [...product.adicionaisSelecionados] : []
@@ -205,7 +237,9 @@ product.adicionaisSelecionados = null;
 function removeFromCart(index) {
   cart.splice(index, 1);
   renderCart();
+  render();
 }
+
 
 function renderCart() {
   const ul = document.getElementById("cart");
