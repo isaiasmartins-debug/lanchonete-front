@@ -181,6 +181,21 @@ document.querySelectorAll(".add-btn").forEach(btn => {
 });
 }
 
+function resetarCardapio() {
+  // Zera todas as quantidades no DOM (estado base)
+  document.querySelectorAll(".qty").forEach(qty => {
+    qty.textContent = "0";
+  });
+
+  // Remove qualquer controle ativo
+  document.querySelectorAll(".qty-control").forEach(control => {
+    control.remove();
+  });
+
+  // Re-renderiza o cardápio inteiro
+  render();
+}
+
 function addToCart(id) {
   const product = products.find(p => p.id === id);
   if (!product) return;
@@ -342,6 +357,7 @@ document.getElementById("sendOrder").onclick = () => {
   alert("Pedido enviado! 😄");
   cart = [];
   renderCart();
+  resetarCardapio();
   document.getElementById("name").value = "";
 };
 
