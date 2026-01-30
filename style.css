@@ -221,3 +221,10 @@ h2 {
   margin-top: 8px;
   box-sizing: border-box;
 }
+
+.erro-nome {
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}

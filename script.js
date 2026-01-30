@@ -349,12 +349,44 @@ function hasBurgerInCart() {
 
 document.getElementById("sendOrder").onclick = () => {
   const name = document.getElementById("name").value;
-  if (!name || cart.length === 0) {
-    alert("Preencha o nome e escolha algo 😅");
+  const erroSpan = document.getElementById("erroNome");
+
+  // 1️⃣ validar nome
+  const erroNome = validarNomeCliente(name);
+
+  if (erroNome) {
+    erroSpan.textContent = erroNome;
+    erroSpan.style.display = "block";
+    document.getElementById("name").focus();
     return;
   }
 
-  alert("Pedido enviado! 😄");
+  erroSpan.style.display = "none";
+
+  // 2️⃣ validar carrinho
+  if (cart.length === 0) {
+    alert("Escolha pelo menos um item antes de enviar o pedido 😅");
+    return;
+  }
+
+  // 3️⃣ gerar número do pedido
+  const numeroPedido = gerarNumeroPedido();
+
+  // 4️⃣ montar pedido
+  const pedido = {
+    numero: numeroPedido,
+    nome: name,
+    itens: cart,
+    total: document.getElementById("total").textContent
+  };
+
+  // 5️⃣ usar envio do pedido (função que você já tem)
+  enviarPedido(pedido);
+
+  // 6️⃣ feedback
+  alert(`Pedido #${numeroPedido} enviado! 😁`);
+
+  // 7️⃣ limpar estado
   cart = [];
   renderCart();
   resetarCardapio();
@@ -487,6 +519,54 @@ function calcularTotalAdicionais(adicionais = []) {
   return adicionais.reduce((total, a) => {
     return total + (a.preco * a.quantidade);
   }, 0);
+}
+
+function validarNomeCliente(nome) {
+  if (!nome) return "Informe seu nome";
+
+  const nomeTrim = nome.trim();
+
+  if (nomeTrim.length < 3) {
+    return "O nome deve ter pelo menos 3 letras";
+  }
+
+  // Apenas letras e espaços
+  if (!/^[A-Za-zÀ-ÿ\s]+$/.test(nomeTrim)) {
+    return "Use apenas letras no nome";
+  }
+
+  // Pelo menos uma vogal
+  if (!/[aeiouáéíóúàèìòùãõâêîôû]/i.test(nomeTrim)) {
+    return "Digite um nome válido";
+  }
+
+  // Bloquear repetições exageradas (aaa, kkk)
+  if (/(.)\1\1/.test(nomeTrim.toLowerCase())) {
+    return "Digite um nome válido";
+  }
+
+  return null; // nome válido
+}
+
+function gerarNumeroPedido() {
+  const ultimo = Number(localStorage.getItem("ultimoPedido")) || 0;
+  const proximo = ultimo + 1;
+  localStorage.setItem("ultimoPedido", proximo);
+  return proximo;
+}
+
+function enviarPedido({ numero, nome, itens, total }) {
+  console.log("Pedido enviado:", {
+    numero,
+    nome,
+    itens,
+    total
+  });
+
+  // aqui no futuro pode ir:
+  // - WhatsApp
+  // - API / backend
+  // - impressão
 }
 
 document.addEventListener("DOMContentLoaded", () => {
