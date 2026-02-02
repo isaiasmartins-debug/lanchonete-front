@@ -97,6 +97,14 @@ function isInCart(product) {
   );
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const mensagemPedido = document.getElementById("mensagemPedido");
+  if (mensagemPedido) {
+    mensagemPedido.textContent = "";
+    mensagemPedido.style.display = "none";
+    mensagemPedido.className = "mensagem-pedido";
+  }
+});
 
 function render() {
   const categories = ["lanches", "salgados", "acompanhamentos"];
@@ -348,50 +356,74 @@ function hasBurgerInCart() {
 }
 
 document.getElementById("sendOrder").onclick = () => {
+  const mensagemPedido = document.getElementById("mensagemPedido");
+
+// limpa qualquer mensagem anterior
+mensagemPedido.textContent = "";
+mensagemPedido.style.display = "none";
+
+// remove classes antigas (erro / sucesso)
+mensagemPedido.className = "mensagem-pedido";
+
   const name = document.getElementById("name").value;
-  const erroSpan = document.getElementById("erroNome");
+  const numeroCliente = document.getElementById("whatsapp").value;
+
+  const erroNomeSpan = document.getElementById("erroNome");
+  const erroWhatsappSpan = document.getElementById("erroWhatsapp");
 
   // 1️⃣ validar nome
   const erroNome = validarNomeCliente(name);
-
   if (erroNome) {
-    erroSpan.textContent = erroNome;
-    erroSpan.style.display = "block";
+    erroNomeSpan.textContent = erroNome;
+    erroNomeSpan.style.display = "block";
     document.getElementById("name").focus();
     return;
   }
+  erroNomeSpan.style.display = "none";
 
-  erroSpan.style.display = "none";
-
-  // 2️⃣ validar carrinho
-  if (cart.length === 0) {
-    alert("Escolha pelo menos um item antes de enviar o pedido 😅");
+  // 2️⃣ validar número do cliente
+  const erroNumero = validarNumeroCliente(numeroCliente);
+  if (erroNumero) {
+    erroWhatsappSpan.textContent = erroNumero;
+    erroWhatsappSpan.style.display = "block";
+    document.getElementById("whatsapp").focus();
     return;
   }
+  erroWhatsappSpan.style.display = "none";
 
-  // 3️⃣ gerar número do pedido
-  const numeroPedido = gerarNumeroPedido();
+  // 3️⃣ validar carrinho
+  if (cart.length === 0) {
+    mensagemPedido.textContent =
+  "Escolha pelo menos um item antes de enviar o pedido 😅";
+mensagemPedido.classList.add("erro");
+mensagemPedido.style.display = "block";
+return;
+
+  }
 
   // 4️⃣ montar pedido
   const pedido = {
-    numero: numeroPedido,
     nome: name,
+    numeroCliente: numeroCliente.replace(/\D/g, ""),
     itens: cart,
     total: document.getElementById("total").textContent
   };
 
-  // 5️⃣ usar envio do pedido (função que você já tem)
+  // 5️⃣ enviar pedido
   enviarPedido(pedido);
 
-  // 6️⃣ feedback
-  alert(`Pedido #${numeroPedido} enviado! 😁`);
-
-  // 7️⃣ limpar estado
+  // 6️⃣ limpar estado
   cart = [];
   renderCart();
   resetarCardapio();
   document.getElementById("name").value = "";
+  document.getElementById("whatsapp").value = "";
 };
+
+  // 7️⃣ feedback
+  mensagemPedido.textContent = "Pedido enviado com sucesso! 🎉";
+mensagemPedido.classList.add("sucesso");
+mensagemPedido.style.display = "block";
 
 let modalContext = null;
 
@@ -548,25 +580,50 @@ function validarNomeCliente(nome) {
   return null; // nome válido
 }
 
-function gerarNumeroPedido() {
-  const ultimo = Number(localStorage.getItem("ultimoPedido")) || 0;
-  const proximo = ultimo + 1;
-  localStorage.setItem("ultimoPedido", proximo);
-  return proximo;
+function validarNumeroCliente(numero) {
+  if (!numero) return "Informe o número do cliente";
+
+  // remove tudo que não for número
+  const somenteNumeros = numero.replace(/\D/g, "");
+
+  if (somenteNumeros.length < 10 || somenteNumeros.length > 11) {
+    return "Número inválido (use DDD + número)";
+  }
+
+  return null; // número válido
 }
 
-function enviarPedido({ numero, nome, itens, total }) {
-  console.log("Pedido enviado:", {
-    numero,
-    nome,
-    itens,
-    total
+function enviarPedido({ nome, numeroCliente, itens, total }) {
+  let mensagem = ` *Pedido - Rei do Lanche*\n\n`;
+
+  mensagem += ` *Cliente:* ${nome}\n`;
+  mensagem += ` *WhatsApp:* ${numeroCliente}\n\n`;
+
+  mensagem += ` *Itens:*\n`;
+
+  itens.forEach(item => {
+    const produtoOriginal = products.find(p => p.id === item.id);
+const qtd = item.quantity ?? 1;
+
+// 🔥 BUSCAR PREÇO PELO ID DO PRODUTO
+const nomeItem = produtoOriginal ? produtoOriginal.name : "Item";
+const preco = produtoOriginal ? produtoOriginal.price : 0;
+
+    mensagem += `• ${nomeItem} x${qtd} — R$ ${(preco * qtd)
+      .toFixed(2)
+      .replace(".", ",")}\n`;
   });
 
-  // aqui no futuro pode ir:
-  // - WhatsApp
-  // - API / backend
-  // - impressão
+  mensagem += `\n *Total:* ${total}\n\n`;
+  mensagem += `Agradecemos o seu pedido! \n`;
+  mensagem += `Avisaremos por aqui quando estiver pronto.`;
+
+  // 🔴 NÚMERO DA LANCHONETE (fixo)
+  const telefoneLanchonete = "5598984911219"; // seu número real
+
+  const url = `https://wa.me/${telefoneLanchonete}?text=${encodeURIComponent(mensagem)}`;
+
+  window.open(url, "_blank");
 }
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -228,3 +228,33 @@ h2 {
   margin-top: 4px;
   display: none;
 }
+
+#name,
+#whatsapp {
+  width: 50%;
+  display: block;
+}
+
+#whatsapp {
+  width: 50%;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+
+.mensagem-pedido {
+  display: none;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.mensagem-pedido.sucesso {
+  color: #00ff88;
+}
+
+.mensagem-pedido.erro {
+  color: #ff4d4d;
+}

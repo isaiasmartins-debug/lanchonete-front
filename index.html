@@ -37,15 +37,19 @@
       <h2>🛒 Seu Pedido</h2>
       <ul id="cart"></ul>
       <p>Total: R$ <span id="total">0.00</span></p>
-      <input
-  type="text"
-  id="name"
-  placeholder="Seu nome:"
-/>
-
+      <input type="text" id="name" placeholder="Nome do cliente:">
 <small id="erroNome" class="erro-nome"></small>
 
+<input
+  type="tel"
+  id="whatsapp"
+  placeholder="WhatsApp do cliente:"
+>
+<small id="erroWhatsapp" class="erro-nome"></small>
+
+
       <button type="button" id="sendOrder">Enviar Pedido</button>
+      <small id="mensagemPedido" class="mensagem-pedido"></small>
     </section>
   </main>
 
