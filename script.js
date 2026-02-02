@@ -593,35 +593,32 @@ function validarNumeroCliente(numero) {
   return null; // número válido
 }
 
-function enviarPedido({ nome, numeroCliente, itens, total }) {
-  let mensagem = ` *Pedido - Rei do Lanche*\n\n`;
+function enviarPedido({ name, numeroCliente, itens, total }) {
+  let mensagem = "*Pedido - Rei do Lanche*\n\n";
 
-  mensagem += ` *Cliente:* ${nome}\n`;
-  mensagem += ` *WhatsApp:* ${numeroCliente}\n\n`;
+  mensagem += `*Cliente:* ${name}\n`;
+  mensagem += `*WhatsApp:* ${numeroCliente}\n\n`;
 
-  mensagem += ` *Itens:*\n`;
+  mensagem += "*Itens:*\n";
 
   itens.forEach(item => {
     const produtoOriginal = products.find(p => p.id === item.id);
-const qtd = item.quantity ?? 1;
+    const qtd = item.quantity ?? 1;
 
-// 🔥 BUSCAR PREÇO PELO ID DO PRODUTO
-const nomeItem = produtoOriginal ? produtoOriginal.name : "Item";
-const preco = produtoOriginal ? produtoOriginal.price : 0;
+    const nomeItem = produtoOriginal ? produtoOriginal.name : "Item";
+    const preco = produtoOriginal ? produtoOriginal.price : 0;
 
     mensagem += `• ${nomeItem} x${qtd} — R$ ${(preco * qtd)
       .toFixed(2)
       .replace(".", ",")}\n`;
   });
 
-  mensagem += `\n *Total:* ${total}\n\n`;
-  mensagem += `Agradecemos o seu pedido! \n`;
-  mensagem += `Avisaremos por aqui quando estiver pronto.`;
+  mensagem += `\n*Total:* ${total}\n\n`;
+  mensagem += "Agradecemos o seu pedido!\n";
+  mensagem += "Avisaremos por aqui quando estiver pronto.";
 
-  // 🔴 NÚMERO DA LANCHONETE (fixo)
-  const telefoneLanchonete = "5598984911219"; // seu número real
-
-  const url = `https://wa.me/${telefoneLanchonete}?text=${encodeURIComponent(mensagem)}`;
+  // ✅ USA SEMPRE O NÚMERO DIGITADO
+  const url = `https://wa.me/55${numeroCliente}?text=${encodeURIComponent(mensagem)}`;
 
   window.open(url, "_blank");
 }
