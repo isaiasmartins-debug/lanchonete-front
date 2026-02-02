@@ -593,10 +593,10 @@ function validarNumeroCliente(numero) {
   return null; // número válido
 }
 
-function enviarPedido({ name, numeroCliente, itens, total }) {
+function enviarPedido({ nome, numeroCliente, itens, total }) {
   let mensagem = "*Pedido - Rei do Lanche*\n\n";
 
-  mensagem += `*Cliente:* ${name}\n`;
+  mensagem += `*Cliente:* ${nome}\n`;
   mensagem += `*WhatsApp:* ${numeroCliente}\n\n`;
 
   mensagem += "*Itens:*\n";
