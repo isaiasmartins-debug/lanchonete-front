@@ -608,12 +608,14 @@ function enviarPedido({ nome, numeroCliente, itens, total }) {
     const nomeItem = produtoOriginal ? produtoOriginal.name : "Item";
     const preco = produtoOriginal ? produtoOriginal.price : 0;
 
-    mensagem += `• ${nomeItem} x${qtd} — R$ ${(preco * qtd)
+    mensagem += `- _${nomeItem} x${qtd} — R$ ${(preco * qtd)
       .toFixed(2)
-      .replace(".", ",")}\n`;
+      .replace(".", ",")}_\n`;
   });
 
-  mensagem += `\n*Total:* ${total}\n\n`;
+  mensagem += `\n*Total:* R$ ${Number(total)
+    .toFixed(2)
+    .replace(".", ",")}\n\n`;
   mensagem += "Agradecemos o seu pedido!\n";
   mensagem += "Avisaremos por aqui quando estiver pronto.";
 
