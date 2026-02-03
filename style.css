@@ -1,3 +1,15 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -8,10 +20,13 @@ body {
 header {
   text-align: center;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .logo {
+  width: 100%;
   max-width: 400px;
+  height: auto;
 }
 
 h2 {
