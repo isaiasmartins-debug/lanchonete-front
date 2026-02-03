@@ -608,9 +608,34 @@ function enviarPedido({ nome, numeroCliente, itens, total }) {
     const nomeItem = produtoOriginal ? produtoOriginal.name : "Item";
     const preco = produtoOriginal ? produtoOriginal.price : 0;
 
-    mensagem += `- _${nomeItem} x${qtd} — R$ ${(preco * qtd)
+      // 🔹 Preço do item (já com adicionais somados no total geral)
+    const precoItem = preco * qtd;
+
+     // 🔹 Linha principal do item
+    mensagem += `- *_${nomeItem} x${qtd} – R$ ${precoItem
       .toFixed(2)
-      .replace(".", ",")}_\n`;
+      .replace(".", ",")}_*\n`;
+
+       // 🔸 Sabores
+    if (item.sabor) {
+      mensagem += `   _Sabor: ${item.sabor}_\n`;
+    }
+
+     if (item.sabores && item.sabores.length > 0) {
+      mensagem += `   _Sabores: ${item.sabores.join(", ")}_\n`;
+    }
+
+     // 🔸 Adicionais
+    if (item.adicionais && item.adicionais.length > 0) {
+      const adicionaisTexto = item.adicionais
+  .map(ad => {
+    const precoAd = ad.preco ? ` (+R$ ${Number(ad.preco).toFixed(2).replace(".", ",")})` : "";
+    return `${ad.nome}${precoAd}`;
+  })
+  .join(", ");
+
+      mensagem += `   _+ ${adicionaisTexto}_\n`;
+    }
   });
 
   mensagem += `\n*Total:* R$ ${Number(total)
