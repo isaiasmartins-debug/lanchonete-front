@@ -1,14 +1,14 @@
 const products = [
   { id: 1, 
     name: "Hambúrguer Tradicional", 
-    price: 10, 
+    price: 11, 
     category: "lanches",
     type: "lanche",
     behavior: "config",
     desc: "Pão, ovo, presunto, queijo, salada, molho barbecue, bacon, maionese da casa, carne industrializada" },
   { id: 2, 
     name: "Hambúrguer Artesanal", 
-    price: 16, 
+    price: 17, 
     category: "lanches",
     type: "lanche",
     behavior: "config",
@@ -22,7 +22,7 @@ const products = [
     desc: "Macarrão, molho à bolonhesa, salsicha, queijo, presunto, milho verde, batata palha" },
   { id: 4, 
     name: "Cachorro-quente", 
-    price: 8, 
+    price: 9, 
     category: "lanches",
     type: "lanche",
     behavior: "quantity",
@@ -60,13 +60,13 @@ const products = [
 
   { id: 9, name: "Batata Frita na Marmita", price: 10, category: "acompanhamentos", type: "acompanhamento", behavior: "quantity" },
 
-  { id: 10, name: "Carne Industrializada", price: 3, category: "adicionais" },
+  { id: 10, name: "Carne Industrializada", price: 4, category: "adicionais" },
   { id: 11, name: "Carne Caseira", price: 8, category: "adicionais" },
   { id: 12, name: "Ovo", price: 2, category: "adicionais" }
 ];
 
 const adicionaisDisponiveis = [
-  { nome: "Carne Industrializada", preco: 3 },
+  { nome: "Carne Industrializada", preco: 4 },
   { nome: "Carne Caseira", preco: 8},
   {nome: "Ovo",preco: 2}
 ];
