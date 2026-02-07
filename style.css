@@ -283,3 +283,75 @@ h2 {
 .mensagem-pedido.erro {
   color: #ff4d4d;
 }
+
+/* ===============================
+   NAVEGAÇÃO LANCHES / BEBIDAS
+================================ */
+.menu-nav {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  background: #000;
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.nav-btn.active {
+  background: #d4af37;
+  color: #000;
+}
+
+/* ===============================
+   CONTEÚDO DO CARDÁPIO
+================================ */
+.menu-content {
+  width: 100%;
+}
+
+/* ===============================
+   TROCA SUAVE (ANTI-BUG)
+================================ */
+.menu-section {
+  display: none;
+  opacity: 0;
+  transform: translateX(12px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.menu-section.active {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ===============================
+   GRUPOS DE BEBIDAS
+================================ */
+.bebidas-grupo {
+  margin-bottom: 20px;
+}
+
+.bebidas-grupo h3 {
+  margin-bottom: 8px;
+  color: #d4af37;
+  font-size: 18px;
+  border-bottom: 1px solid #d4af37;
+  padding-bottom: 4px;
+}
+
+/* ===============================
+   SEGURANÇA CONTRA ESPAÇO GIGANTE
+================================ */
+section {
+  margin-bottom: 20px;
+}

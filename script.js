@@ -62,7 +62,147 @@ const products = [
 
   { id: 10, name: "Carne Industrializada", price: 4, category: "adicionais" },
   { id: 11, name: "Carne Caseira", price: 8, category: "adicionais" },
-  { id: 12, name: "Ovo", price: 2, category: "adicionais" }
+  { id: 12, name: "Ovo", price: 2, category: "adicionais" },
+
+ // ===== BEBIDAS =====
+{
+  id: 13,
+  name: "Coca-Cola 1L",
+  price: 10,
+  category: "refrigerantes",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 14,
+  name: "Jesus 1L",
+  price: 10,
+  category: "refrigerantes",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 15,
+  name: "Fanta 1L",
+  price: 9,
+  category: "refrigerantes",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 16,
+  name: "Guaraná 1L",
+  price: 9,
+  category: "refrigerantes",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 17,
+  name: "Coca-Cola 2L",
+  price: 14,
+  category: "refrigerantes",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 18,
+  name: "Jesus 2L",
+  price: 14,
+  category: "refrigerantes",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 19,
+  name: "Fanta 2L",
+  price: 14,
+  category: "refrigerantes",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 20,
+  name: "Guaraná 2L",
+  price: 14,
+  category: "refrigerantes",
+  type: "bebida",
+  behavior: "quantity"
+},
+
+{
+  id: 21,
+  name: "Coca-Cola Lata",
+  price: 6,
+  category: "refri-lata",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 22,
+  name: "Jesus Lata",
+  price: 6,
+  category: "refri-lata",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 23,
+  name: "Fanta Lata",
+  price: 5,
+  category: "refri-lata",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 24,
+  name: "Guaraná Lata",
+  price: 5,
+  category: "refri-lata",
+  type: "bebida",
+  behavior: "quantity"
+},
+
+{
+  id: 25,
+  name: "Água",
+  price: 3,
+  category: "agua",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 26,
+  name: "Água com gás",
+  price: 4,
+  category: "agua",
+  type: "bebida",
+  behavior: "quantity"
+},
+{ id: 27,
+  name: "H2O 500ml",
+  price: 7,
+  category: "agua",
+  type: "bebida",
+  behavior: "quantity"
+},
+
+{
+  id: 28,
+  name: "Suco de caixinha",
+  price: 3,
+  category: "suco",
+  type: "bebida",
+  behavior: "quantity"
+},
+{
+  id: 29,
+  name: "Suco natural",
+  price: 4,
+  category: "suco",
+  type: "bebida",
+  behavior: "quantity"
+}
 ];
 
 const adicionaisDisponiveis = [
@@ -107,7 +247,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function render() {
-  const categories = ["lanches", "salgados", "acompanhamentos"];
+  const categories = [
+  "lanches",
+  "salgados",
+  "acompanhamentos",
+  "refrigerantes",
+  "refri-lata",
+  "agua",
+  "suco"
+];
 
   categories.forEach(cat => {
     const div = document.getElementById(cat);
@@ -649,6 +797,32 @@ function enviarPedido({ nome, numeroCliente, itens, total }) {
 
   window.open(url, "_blank");
 }
+
+// ===============================
+// TROCA DE PÁGINA: LANCHES / BEBIDAS
+// ===============================
+
+const btnLanches = document.getElementById("btn-lanches");
+const btnBebidas = document.getElementById("btn-bebidas");
+
+const secLanches = document.getElementById("sec-lanches");
+const secBebidas = document.getElementById("sec-bebidas");
+
+btnLanches.addEventListener("click", () => {
+  secLanches.classList.add("active");
+  secBebidas.classList.remove("active");
+
+  btnLanches.classList.add("active");
+  btnBebidas.classList.remove("active");
+});
+
+btnBebidas.addEventListener("click", () => {
+  secBebidas.classList.add("active");
+  secLanches.classList.remove("active");
+
+  btnBebidas.classList.add("active");
+  btnLanches.classList.remove("active");
+});
 
 document.addEventListener("DOMContentLoaded", () => {
 

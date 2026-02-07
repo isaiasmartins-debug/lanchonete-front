@@ -13,45 +13,97 @@
   </header>
 
   <main>
-    <section>
-      <h2>🍔 Lanches</h2>
-      <div id="lanches" class="menu"></div>
+
+  <!-- NAVEGAÇÃO ENTRE LANCHES E BEBIDAS -->
+  <div class="menu-nav">
+    <button class="nav-btn active" id="btn-lanches">Lanches</button>
+    <button class="nav-btn" id="btn-bebidas">Bebidas</button>
+  </div>
+
+  <!-- CONTEÚDO DO CARDÁPIO -->
+  <div class="menu-content">
+
+    <!-- ===== LANCHES ===== -->
+    <section id="sec-lanches" class="menu-section active">
+
+      <section>
+        <h2>🍔 Lanches</h2>
+        <div id="lanches" class="menu"></div>
+      </section>
+
+      <section>
+        <h2>🥟 Salgados</h2>
+        <div id="salgados" class="menu"></div>
+      </section>
+
+      <section>
+        <h2>🍟 Acompanhamentos</h2>
+        <div id="acompanhamentos" class="menu"></div>
+      </section>
+
+      <section id="adicionais-section">
+        <h2>➕ Adicionais</h2>
+        <div id="adicionais" class="menu"></div>
+      </section>
+
     </section>
 
-    <section>
-      <h2>🥟 Salgados</h2>
-      <div id="salgados" class="menu"></div>
+    <!-- ===== BEBIDAS ===== -->
+    <section id="sec-bebidas" class="menu-section">
+
+      <h2>🥤 Bebidas</h2>
+
+      <div class="bebidas-grupo">
+        <h3>Refrigerantes</h3>
+        <div id="refrigerantes" class="menu"></div>
+      </div>
+
+      <div class="bebidas-grupo">
+        <h3>Refri-Lata</h3>
+        <div id="refri-lata" class="menu"></div>
+      </div>
+
+      <div class="bebidas-grupo">
+        <h3>Água</h3>
+        <div id="agua" class="menu"></div>
+      </div>
+
+      <div class="bebidas-grupo">
+        <h3>Suco</h3>
+        <div id="suco" class="menu"></div>
+      </div>
+
     </section>
 
-    <section>
-      <h2>🍟 Acompanhamentos</h2>
-      <div id="acompanhamentos" class="menu"></div>
-    </section>
+  </div>
 
-    <section id="adicionais-section">
-  <h2>➕ Adicionais</h2>
-  <div id="adicionais" class="menu"></div>
-</section>
+  <!-- ===== CARRINHO (INTACTO) ===== -->
+  <section class="cart">
+    <h2>🛒 Seu Pedido</h2>
 
-    <section class="cart">
-      <h2>🛒 Seu Pedido</h2>
-      <ul id="cart"></ul>
-      <p>Total: R$ <span id="total">0.00</span></p>
-      <input type="text" id="name" placeholder="Nome do cliente:">
-<small id="erroNome" class="erro-nome"></small>
+    <ul id="cart"></ul>
 
-<input
-  type="tel"
-  id="whatsapp"
-  placeholder="WhatsApp do cliente:"
->
-<small id="erroWhatsapp" class="erro-nome"></small>
+    <p>Total: R$ <span id="total">0.00</span></p>
 
+    <input
+      type="text"
+      id="name"
+      placeholder="Nome do cliente:"
+    />
+    <small id="erroNome" class="erro-nome"></small>
 
-      <button type="button" id="sendOrder">Enviar Pedido</button>
-      <small id="mensagemPedido" class="mensagem-pedido"></small>
-    </section>
-  </main>
+    <input
+      type="tel"
+      id="whatsapp"
+      placeholder="WhatsApp do cliente:"
+    />
+    <small id="erroWhatsapp" class="erro-nome"></small>
+
+    <button type="button" id="sendOrder">Enviar Pedido</button>
+    <small id="mensagemPedido" class="mensagem-pedido"></small>
+  </section>
+
+</main>
 
 <div id="modalOverlay" class="modal-overlay hidden">
   <div class="modal">
