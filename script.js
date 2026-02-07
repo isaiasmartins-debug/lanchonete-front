@@ -116,7 +116,7 @@ const products = [
 {
   id: 19,
   name: "Fanta 2L",
-  price: 14,
+  price: 13,
   category: "refrigerantes",
   type: "bebida",
   behavior: "quantity"
@@ -124,7 +124,7 @@ const products = [
 {
   id: 20,
   name: "Guaraná 2L",
-  price: 14,
+  price: 13,
   category: "refrigerantes",
   type: "bebida",
   behavior: "quantity"
@@ -197,7 +197,7 @@ const products = [
 },
 {
   id: 29,
-  name: "Suco natural",
+  name: "Suco",
   price: 4,
   category: "suco",
   type: "bebida",
