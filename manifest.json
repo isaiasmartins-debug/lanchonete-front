@@ -1,7 +1,7 @@
 {
   "name": "Lanchonete do Rei do Lanche",
   "short_name": "Rei do Lanche",
-  "start_url": "/lanchonete-front/index.html",
+  "start_url": "/lanchonete-front/",
   "scope": "/lanchonete-front/",
   "display": "standalone",
   "background_color": "#000000",
